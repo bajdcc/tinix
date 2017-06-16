@@ -1,5 +1,6 @@
 # Tinix
 ===============================
+
 forked from http://code.taobao.org/p/tinixdev/src/
 
 **一个小型的操作系统。**
@@ -8,6 +9,7 @@ forked from http://code.taobao.org/p/tinixdev/src/
 本工程只能在linux下编译，如果要在windows下编译，请下载作者原代码。
 
 ## 目录
+```text
 |-- floppy.img                                        #最终完成的软盘镜像
 |-- tinix                                             #内核目录
 |   |-- boot                                          #内核加载器目录
@@ -38,6 +40,7 @@ forked from http://code.taobao.org/p/tinixdev/src/
     |-- Makefile.queens
     |-- Makefile.sh
 `-- objs                                              #避免重新编译的obj文件
+```
 
 
 ## 构建工具
