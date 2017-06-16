@@ -1,0 +1,27 @@
+############################################################
+#                  Makefile for Tinix                      #
+############################################################
+
+ENTRYPOINT      = 0x100000
+
+CC              = gcc
+LD              = ld
+CFLAGS          = -I ./ -c -fleading-underscore -nostdinc -fno-builtin -fno-stack-protector \
+				-W -Wall -fno-common
+LDFLAGS         = -x -s -Ttext $(ENTRYPOINT) -e start
+
+ELF_KERNEL      = oskernel.elf
+GZIP_KERNEL     = oskernel.elf.gz
+OBJS            = boot.o loader.o console.o
+
+$(GZIP_KERNEL) : $(ELF_KERNEL)
+	gzip -f $^
+
+$(ELF_KERNEL) : $(OBJS)
+	$(LD) $(LDFLAGS) -o $@ $(OBJS)
+
+$(OBJS) :boot.S loader.c console.c
+	$(CC) $(CFLAGS) $^
+
+clean:
+	-rm $(OBJS) $(GZIP_KERNEL) kernelz

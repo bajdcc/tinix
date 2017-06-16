@@ -1,0 +1,61 @@
+############################################################
+#                  Makefile for Tinix                      #
+############################################################
+
+ENTRYPOINT      = 0xC0000000
+
+CC              = gcc
+LD              = ld
+CFLAGS          = -I ./ -c -fno-stack-protector -fleading-underscore -nostdinc \
+				-fno-builtin -fno-common -O0 -W -Wall -Wno-pointer-sign -D FAST_SYS_CALL
+LDFLAGS         = -s -Ttext $(ENTRYPOINT) -e start -M 
+
+KERNEL_BIN      = kernelz
+TINIXKERNEL     = kernel.elf
+OBJS            = $(INIT) $(MM) $(DEV) $(KERNEL) $(FS) $(LIB)
+INIT            = head.o main.o
+MM              = memory.o
+DEV             = console.o keyboard.o floppy.o
+FS              = fs.o fat12.o sysfs.o
+LIB             = vsprintf.o string.o printk.o
+KERNEL          = task.o io.o traps.o asm.o timer.o sys_exec.o syscall_entry.o \
+				sys_exit.o sys_open.o sys_read.o sys_seek.o sys_wait.o sys_close.o sys_write.o \
+				sys_kill.o sys_getpid.o sys_getticks.o sys_pstat.o sys_opendir.o sys_readdir.o \
+				sys_getdate.o sys_reboot.o sys_sleep.o
+
+$(KERNEL_BIN) : $(TINIXKERNEL)
+	objcopy -S -O binary $(TINIXKERNEL) $(KERNEL_BIN)
+
+$(TINIXKERNEL) : $(OBJS)
+	$(LD) $(LDFLAGS) -o $(TINIXKERNEL) $(OBJS) > system.map
+
+$(INIT) :	init/head.S init/main.c
+	$(CC) $(CFLAGS) $^ 
+
+$(MM) :		mm/memory.c
+	$(CC) $(CFLAGS) $^
+
+$(DEV) :	dev/console.c dev/keyboard.c dev/floppy.c
+	$(CC) $(CFLAGS) $^
+
+$(FS) :		fs/fs.c fs/fat12.c fs/sysfs.c
+	$(CC) $(CFLAGS) $^
+
+$(LIB) :	lib/vsprintf.c lib/string.c lib/printk.c
+	$(CC) $(CFLAGS) $^
+
+$(KERNEL) :	kernel/task.c kernel/io.c kernel/traps.c kernel/asm.S \
+			kernel/timer.c kernel/sys_exec.c kernel/syscall_entry.c \
+			kernel/sys_exit.c kernel/sys_open.c kernel/sys_read.c \
+			kernel/sys_seek.c kernel/sys_wait.c kernel/sys_close.c  kernel/sys_write.c \
+			kernel/sys_kill.c kernel/sys_getpid.c kernel/sys_getticks.c kernel/sys_pstat.c \
+			kernel/sys_opendir.c kernel/sys_readdir.c kernel/sys_getdate.c kernel/sys_reboot.c \
+			kernel/sys_sleep.c
+	$(CC) $(CFLAGS) $^
+
+
+clean:
+	-rm $(OBJS)
+	-rm $(TINIXKERNEL)
+	-rm $(KERNEL_BIN)
+	-rm system.map
