@@ -5,8 +5,9 @@ forked from http://code.taobao.org/p/tinixdev/src/
 
 **一个小型的操作系统。**
 
-作者博客： http://bbs.pediy.com/thread-182967.htm，我只是搬运工。
+![作者博客](http://bbs.pediy.com/thread-182967.htm)，我只是搬运工。
 本工程只能在linux下编译，如果要在windows下编译，请下载作者原代码。
+**已經修改了makefile，現在可以在32位/64位系統中編譯代碼了。**
 
 ## 目录
 ```text

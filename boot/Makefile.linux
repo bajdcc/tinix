@@ -6,9 +6,9 @@ ENTRYPOINT      = 0x100000
 
 CC              = gcc
 LD              = ld
-CFLAGS          = -I ./ -c -fleading-underscore -nostdinc -fno-builtin -fno-stack-protector \
+CFLAGS          = -O0 -Wall -m32 -I ./ -c -fleading-underscore -nostdinc -fno-builtin -fno-stack-protector \
 				-W -Wall -fno-common
-LDFLAGS         = -x -s -Ttext $(ENTRYPOINT) -e start
+LDFLAGS         = -melf_i386 -x -s -Ttext $(ENTRYPOINT) -e start
 
 ELF_KERNEL      = oskernel.elf
 GZIP_KERNEL     = oskernel.elf.gz

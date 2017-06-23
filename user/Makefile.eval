@@ -5,8 +5,8 @@
 ENTRYPOINT      = 0x80000000
 DATASEG         = 0x80005000
 CC              = gcc
-LD              = ld
-CFLAGS          = -I ./include -c -fleading-underscore -nostdinc -fno-builtin \
+LD              = ld -melf_i386
+CFLAGS          = -O0 -Wall -m32 -I ./include -c -fleading-underscore -nostdinc -fno-builtin \
 				-fno-common -W -Wall -D FAST_SYS_CALL -fno-stack-protector
 LDFLAGS         = -x -s  -Ttext $(ENTRYPOINT) -Tdata $(DATASEG) -e _tinix_main
 

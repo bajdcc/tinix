@@ -18,7 +18,7 @@ make -f Makefile.pi
 make -f Makefile.queens
 # build image
 cd ..
-[ ! -d tmp ] || mkdir tmp
+[ -d tmp ] || mkdir tmp
 sudo mount floppy.img -t vfat tmp
 sudo \cp -rf ./oskernel tmp/boot
 sudo \cp -rf ./user/sh tmp/bin
