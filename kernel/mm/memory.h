@@ -35,7 +35,8 @@
 #define PAGE_READONLY   (PAGE_PRESENT | PAGE_USER | PAGE_ACCESSED)
 #define PAGE_TABLE      (PAGE_PRESENT | PAGE_RW | PAGE_USER | PAGE_ACCESSED)
 
-#define PAGE_ALIGN(_x)  ((_x)&0xFFFFF000)
+#define PAGE_MASK       (~(PAGE_SIZE-1))
+#define PAGE_ALIGN(X)   (((X)+PAGE_SIZE-1)&PAGE_MASK)
 
 
 /* 用刷新cr3的方法来刷新TLB */

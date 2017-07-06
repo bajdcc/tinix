@@ -63,8 +63,16 @@ static void do_exception_exit(char * str,long * esp,long error_code,
     warning("DS=%04X  ES=%04X   FS=%04X  CS=%04X   EFLAGS: %08X",
         ds&0xffff, es&0xffff, fs&0xffff, esp[1]&0xffff, esp[2]);
     warning("EIP=%08X ", esp[0]);
-    warning("Task %d exit.", current);
-    sys_exit();
+    
+    if ((esp[1]&0xffff) == KERNEL_CS)
+    {
+        panic("Kernel mode exception, panic!");
+    }
+    else
+    {
+        warning("User mode exception, Task %d exit.", current);
+        sys_exit();
+    }
 }
 
 void do_double_fault(long * esp, long error_code,
