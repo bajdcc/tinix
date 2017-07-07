@@ -1,0 +1,28 @@
+############################################################
+#                  Makefile for Tinix shell                #
+############################################################
+
+ENTRYPOINT      = 0x80000000
+CC              = gcc
+LD              = ld -melf_i386
+CFLAGS          = -O2 -Wall -m32 -I ./include -c -fleading-underscore -nostdinc -fno-builtin \
+				-fno-common -W -Wall -D FAST_SYS_CALL -fno-stack-protector
+LDFLAGS         = -x -s  -Ttext $(ENTRYPOINT) -e _tinix_main
+
+EXECUTABLE      = badapple
+OBJ             = objs/badapple.o 
+LIB_OBJS        = objs/syscall.o objs/string.o objs/vsprintf.o objs/sprintf.o objs/printf.o 
+
+$(EXECUTABLE) : $(OBJ) $(LIB_OBJS)
+	$(LD) $(LDFLAGS) -o $@ $^
+
+$(OBJ) :app/badapple.c
+	$(CC) $(CFLAGS) $^
+	mv *.o objs/
+
+$(LIB_OBJS) :lib/syscall.c lib/string.c lib/vsprintf.c lib/sprintf.c lib/printf.c
+	$(CC) $(CFLAGS) $^
+	mv *.o objs/
+
+clean:
+	-rm $(OBJ) $(EXECUTABLE)

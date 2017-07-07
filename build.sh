@@ -16,6 +16,7 @@ make -f Makefile.sh
 make -f Makefile.eval
 make -f Makefile.pi
 make -f Makefile.queens
+make -f Makefile.badapple
 # build image
 cd ..
 [ -d tmp ] || mkdir tmp
@@ -25,6 +26,7 @@ sudo \cp -rf ./user/sh tmp/bin
 sudo \cp -rf ./user/eval tmp/bin
 sudo \cp -rf ./user/queens tmp/bin
 sudo \cp -rf ./user/pi tmp/bin
+sudo \cp -rf ./user/badapple tmp/bin
 sleep 1
 sudo umount tmp
 
