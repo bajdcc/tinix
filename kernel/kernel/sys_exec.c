@@ -135,7 +135,6 @@ static void new_task_entry()
 
     /* iret to user */
     iret_to_user(selfhead.e_entry, PAGE_OFFSET-4);
-
 }
 
 /*
