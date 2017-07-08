@@ -1,15 +1,17 @@
 #include <tinix.h>
 
+/* 
+ * banner
+ */
+const char * banner = 
+    "                       _____ _       _         ___  ____                        "
+    "                      |_   _(_)_ __ (_)_  __  / _ \\/ ___|                       "
+    "                        | | | | '_ \\| \\ \\/ / | | | \\___ \\                       "
+    "                        | | | | | | | |>  <  | |_| |___) |                      "
+    "                        |_| |_|_| |_|_/_/\\_\\  \\___/|____/                       "
+    "                                                                                ";
 
 /******内建指令表********/
-typedef int (*fun_ptr)(void);
-typedef struct _st_cmd
-{
-    char    *cmd;
-    char    *help;
-    fun_ptr function;
-}st_cmd;
-
 int buildin_help();
 int buildin_id();
 int buildin_pwd();
@@ -26,6 +28,13 @@ int buildin_tree();
 int buildin_reboot();
 int buildin_sleep();
 
+typedef int (*fun_ptr)(void);
+typedef struct _st_cmd
+{
+    char    *cmd;
+    char    *help;
+    fun_ptr function;
+}st_cmd;
 st_cmd buildin_table[] = {
     {"help",    "Print help infomation.",       buildin_help},
     {"id",      "Print current task id.",       buildin_id},
@@ -46,6 +55,7 @@ st_cmd buildin_table[] = {
     {"sleep",   "Shell sleep.",                 buildin_sleep},
     {0,0,0}
 };
+
 /********全局变量********/
 #define MAX_CMDLEN  128
 #define MAX_DIR     128
@@ -60,6 +70,7 @@ char* cutdir[MAX_CUT];                                          // 切割路径�
 void    update_prompt();                                        // 重新计算提示符
 char*   paser_dir(char *dir);                                   // 解析目录 消除路径回溯
 void    print_dir(int depth, char *name);                       // 根据深度递归打印某个目录
+void    print_banner();                                         // 显示一个操作系统banner
 void    print_prompt();                                         // 将提示符显示到控制台上
 int     dispatch_cmd(char *cmd);                                // 分派cmd命令
 
@@ -533,6 +544,26 @@ void update_prompt()
     strcat(prompt, "\x23\x0f\x20\x07");             // '#'
 }
 
+void print_banner()
+{
+    unsigned i;
+    unsigned char randcolor;
+    rtc_date t;
+    char tmp[strlen((char*)banner)*2];
+    
+    sys_getdate(&t, sizeof(rtc_date));
+    
+    randcolor = t.sec + sys_getticks();
+    randcolor = randcolor%8 + 8;
+    
+    for (i = 0; i < strlen((char*)banner); i++) 
+    {
+        tmp[i*2]    = banner[i];
+        tmp[i*2+1]  = randcolor;
+    }
+    sys_write(1, tmp, strlen((char*)banner)*2);
+}
+
 void print_prompt()
 {
     sys_write(1, prompt, strlen(prompt));
@@ -582,11 +613,10 @@ void tinix_main()
     int readlen;
     char tmp[MAX_CMDLEN];
 
+    print_banner();
+    
     update_prompt();
 
-    //printf("\xDA\xC4\xC4\xC4\xBF\n");
-    //printf("\xB3\xDB\xDB\x20\xB3\n");
-    //printf("\xC0\xC4\xC4\xC4\xD9\n");
     while(1)
     {
         print_prompt();

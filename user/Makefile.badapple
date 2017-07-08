@@ -5,24 +5,22 @@
 ENTRYPOINT      = 0x80000000
 CC              = gcc
 LD              = ld -melf_i386
-CFLAGS          = -O0 -Wall -m32 -I ./include -c -fleading-underscore -nostdinc -fno-builtin \
+CFLAGS          = -O2 -Wall -m32 -I ./include -c -fleading-underscore -nostdinc -fno-builtin \
 				-fno-common -W -Wall -D FAST_SYS_CALL -fno-stack-protector
 LDFLAGS         = -x -s  -Ttext $(ENTRYPOINT) -e _tinix_main
 
-EXECUTABLE      = eval
-OBJ             = objs/eval.o 
-LIB_OBJS        = objs/syscall.o objs/string.o objs/vsprintf.o objs/printf.o \
-	objs/_doscan.o objs/scanf.o objs/sscanf.o
+EXECUTABLE      = badapple
+OBJ             = objs/badapple.o 
+LIB_OBJS        = objs/syscall.o objs/string.o objs/vsprintf.o objs/sprintf.o objs/printf.o 
 
 $(EXECUTABLE) : $(OBJ) $(LIB_OBJS)
 	$(LD) $(LDFLAGS) -o $@ $^
 
-$(OBJ) :app/eval.c
+$(OBJ) :app/badapple.c
 	$(CC) $(CFLAGS) $^
 	mv *.o objs/
 
-$(LIB_OBJS) :lib/syscall.c lib/string.c lib/vsprintf.c lib/printf.c \
-	lib/_doscan.c lib/scanf.c lib/sscanf.c
+$(LIB_OBJS) :lib/syscall.c lib/string.c lib/vsprintf.c lib/sprintf.c lib/printf.c
 	$(CC) $(CFLAGS) $^
 	mv *.o objs/
 

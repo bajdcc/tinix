@@ -5,7 +5,7 @@
 #include <include/limits.h>
 #include <include/task.h>
 
-#define HZ 100
+#define HZ 1000
 #define LATCH (1193180 / HZ)
 
 /* 定时器状态 */

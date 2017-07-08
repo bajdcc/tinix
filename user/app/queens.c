@@ -37,6 +37,6 @@ void tinix_main()
     upperlim = (upperlim << n) - 1;
 
     test(0, 0, 0);
-    printf("Total %ld solutions, time %d ms.\n", sum, (int) (sys_getticks() - tm)*10);
+    printf("Total %ld solutions, time %d ms.\n", sum, (int) (sys_getticks() - tm));
     sys_exit();
 }

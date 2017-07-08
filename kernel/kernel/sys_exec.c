@@ -40,6 +40,7 @@
 #define Elf32_Word      u32                 //size 4 无符号大整数
 #define Elf32_Uchar     u8
 #define EI_NIDENT       16
+#define PT_LOAD         1
 typedef struct{ 
     Elf32_Uchar         e_ident[EI_NIDENT];
     Elf32_Half          e_type;
@@ -80,7 +81,7 @@ static void new_task_entry()
 {
     u32 fself = 0;
     u32 fsize;
-    u32 i;
+    u32 i, vstart, vend, pages;
     Elf32_Ehdr selfhead;
     Elf32_Phdr selfphdr;
 
@@ -100,22 +101,30 @@ static void new_task_entry()
         sys_read(fself, (u8 *)&selfphdr, sizeof(Elf32_Phdr));
         
         /*
-         *  如果需要的p_memsz正好页对齐，则按照需要申请即可
-         *  否则需要给出p_memsz的向上对齐值
+         *  早期编译器不生成除了 PT_LOAD 段之外的其他类型
+         *  这里要跳过对非 Loadable 段的处理
          */
-        if (selfphdr.p_memsz % PAGE_SIZE != 0)
+        if (selfphdr.p_type == PT_LOAD) 
         {
-            u_get_pages(selfphdr.p_memsz/PAGE_SIZE+1, 
-                selfphdr.p_vaddr, 
-                selfphdr.p_type);
-        } else {
-            u_get_pages(selfphdr.p_memsz/PAGE_SIZE, 
-                selfphdr.p_vaddr, 
-                selfphdr.p_type);
-        }
+            if (selfphdr.p_align != PAGE_SIZE)
+            {
+                panic("Task_entry: unknow segment align %x.", selfphdr.p_align);
+            }
+            
+            /*
+             *  这里 p_vaddr 可能不是页对齐值
+             *  起始地址应该是 p_vaddr 的下边界
+             *  结束地址永远是 p_vaddr + p_memsz 的上边界
+             */
+            vstart = selfphdr.p_vaddr & PAGE_MASK;
+            vend   = PAGE_ALIGN(selfphdr.p_vaddr + selfphdr.p_memsz);
+            pages  = (vend - vstart) / PAGE_SIZE;
+            
+            u_get_pages(pages, vstart, selfphdr.p_type);
 
-        sys_seek(fself, selfphdr.p_offset, SEEK_SET);
-        sys_read(fself, (u8 *)selfphdr.p_vaddr, selfphdr.p_filesz);
+            sys_seek(fself, selfphdr.p_offset, SEEK_SET);
+            sys_read(fself, (u8 *)selfphdr.p_vaddr, selfphdr.p_filesz);
+        }
     }
 
     /*
@@ -126,7 +135,6 @@ static void new_task_entry()
 
     /* iret to user */
     iret_to_user(selfhead.e_entry, PAGE_OFFSET-4);
-
 }
 
 /*

@@ -32,7 +32,7 @@ s32 sys_sleep(u32 stime)
 
     _local_irq_save(eflags);
     task_list[current].state = TASK_SLEEP;
-    add_timer((dotimefun_ptr)&wakeup, TIMER_ONCE, HZ*stime, current);
+    add_timer((dotimefun_ptr)&wakeup, TIMER_ONCE, stime, current);
     _local_irq_restore(eflags);
 
     while(task_list[current].state == TASK_SLEEP)
