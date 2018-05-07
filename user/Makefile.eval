@@ -6,7 +6,7 @@ ENTRYPOINT      = 0x80000000
 CC              = gcc
 LD              = ld -melf_i386
 CFLAGS          = -O0 -Wall -m32 -I ./include -c -fleading-underscore -nostdinc -fno-builtin \
-				-fno-common -W -Wall -D FAST_SYS_CALL -fno-stack-protector
+				-fno-common -W -Wall -D FAST_SYS_CALL -fno-stack-protector -fno-pic
 LDFLAGS         = -x -s  -Ttext $(ENTRYPOINT) -e _tinix_main
 
 EXECUTABLE      = eval

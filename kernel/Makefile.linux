@@ -7,7 +7,7 @@ ENTRYPOINT      = 0xC0000000
 CC              = gcc
 LD              = ld
 CFLAGS          = -O3 -Wall -m32 -I ./ -c -fno-stack-protector -fleading-underscore -nostdinc \
-				-fno-builtin -fno-common -O0 -W -Wall -Wno-pointer-sign -D FAST_SYS_CALL
+				-fno-builtin -fno-common -O0 -W -Wall -Wno-pointer-sign -D FAST_SYS_CALL -fno-pic
 LDFLAGS         = -melf_i386 -s -Ttext $(ENTRYPOINT) -e start -M 
 
 KERNEL_BIN      = kernelz
